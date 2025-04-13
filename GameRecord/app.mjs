@@ -88,7 +88,7 @@ document.getElementById("importSource").onchange = function (event) {
 function visuals() {
     let htmlBuffer = "";
     for (let i = 0; i < games.length; i++) {
-        htmlBuffer += `<div class="gameEntry">${htmlEntry(i)}</div>`;
+        htmlBuffer += `<div class="gameEntry">${htmlEntry(i)}<br><button data-index="${i}">Delete</button></div>`;
     }
     document.getElementById("display").innerHTML = htmlBuffer;
     attachInputListeners();
@@ -125,23 +125,35 @@ function htmlEntry(index) {
 
 function attachInputListeners() {
     document.querySelectorAll(".editable-field").forEach(input => {
-        input.addEventListener("input", (e) => {
+        input.addEventListener("input", function(e) {
             const index = parseInt(e.target.dataset.index);
             const key = e.target.dataset.name;
             let value = e.target.value;
-
             if (["playCount", "personalRating", "year"].includes(key)) {
                 value = parseInt(value);
             }
-
             games[index][key] = value;
-
             if (key === "personalRating") {
                 document.getElementById(`rating-value-${index}`).innerText = value;
             }
-
-            saveLocalStorage(games);
+            saveJSON(games);
         });
+    });
+    document.querySelectorAll("#display button").forEach(deleteButton => {
+        deleteButton.addEventListener("click", function(e) {
+            const index = parseInt(e.target.dataset.index);
+            if(index>-1 && index<games.length) {
+                let modifiedGames = [];
+                for(let i=0;i<games.length;i++) {
+                    if(i!==index) {
+                        modifiedGames.push(games[i]);
+                    }
+                }
+                games = modifiedGames;
+                saveJSON(games);
+                visuals();
+            }
+        })
     });
 }
 

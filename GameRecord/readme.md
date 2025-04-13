@@ -25,3 +25,6 @@ step 7 and 8.
 
 added an UI to the html doc to add more games. And added code in the app.mjs doc to make the UI work on the live server
 
+step 9. 
+
+went back and modified the Visuals function to make a button and give it the ability to delete games that are existing and the ones that are added.
