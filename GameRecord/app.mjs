@@ -174,6 +174,32 @@ document.getElementById("addGame").addEventListener("click", function() {
     games.push(gameEntry);
     saveJSON(games);
     visuals();
-
 });
- 
+
+document.getElementById("sortingPlayers").onclick = function() {
+    sortGamesList("players");
+    visuals();
+};
+document.getElementById("sortRating").onclick = function() {
+    sortGamesList("personalRating");
+    visuals();
+};
+document.getElementById("sortingDifficulty").onclick = function() {
+    sortGamesList("difficulty");
+    visuals();
+};
+document.getElementById("sortPlayCount").onclick = function() {
+    sortGamesList("playCount");
+    visuals();
+};
+
+
+function sortGamesList(name) {
+    games.sort(function(a, b) {
+        if(a[name]<b[name]) {
+            return -1;
+		} else {
+            return 1;
+		}
+    });
+}
