@@ -1,4 +1,4 @@
-import Game from "./models/Game.mjs";
+import Game from "./Models/Game.mjs";
 
 const STORAGE_NAME = "GameData";
 let games = retrieveAllGames()
@@ -47,6 +47,31 @@ document.getElementById("importSource").onchange = function(event) {
     const reader = new FileReader();
     reader.onload = (evt) => {
     saveLocalStorage(evt.target.result);
+    retrieveAllGames();
+    visuals();
     };
     reader.readAsText(file);
 }; 
+
+function visuals() { 
+    let htmlBuffer = "";
+    for(let i=0;i<games.length;i++) {
+htmlBuffer += `<div class="gameEntry">${htmlEntry(i)}</div>`;
+    }
+    document.getElementById("display").innerHTML = htmlBuffer;
+}
+
+function createHTML(index, fieldName, fieldValue) {
+    let fieldType = "text";
+    return `<label>${fieldName}</label><input type="${fieldType}" data-name="${fieldName}" value ="${fieldValue}" data-index="${index}" />`;
+}
+
+function htmlEntry(index) {
+    let gameEntry = games[index];
+let fieldNames = Object.keys(gameEntry);
+let buffer = "";
+for(let i =0;i<fieldNames.length;i++) {
+    buffer += createHTML(index, fieldNames[i], gameEntry[fieldNames[i]]);
+}
+return buffer;
+}
