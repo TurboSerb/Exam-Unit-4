@@ -34,44 +34,112 @@ function retrieveGamesFromLocalStorage() {
     return localStorage.getItem(STORAGE_NAME);
 }
 
-function outputJson(jsonstring) { 
-    return JSON.parse(jsonstring);
+function outputJson(input) {
+    if (typeof input === "string") {
+        try {
+            return JSON.parse(input);
+        } catch (err) {
+            console.error("Invalid JSON string:", input);
+            return [];
+        }
+    } else if (Array.isArray(input)) {
+        return input;
+    } else if (input === null || input === undefined) {
+        return [];
+    } else {
+        return [input]; // fallback
+    }
 }
+
 
 function saveJSON(gameObjects) {
     saveToStorage(JSON.stringify(gameObjects));
 }
 
-document.getElementById("importSource").onchange = function(event) {
-    let file = event.target.files[0]; 
+document.getElementById("importSource").onchange = function (event) {
+    let file = event.target.files[0];
     const reader = new FileReader();
     reader.onload = (evt) => {
-    saveLocalStorage(evt.target.result);
-    retrieveAllGames();
-    visuals();
+        try {
+            const rawData = JSON.parse(evt.target.result);
+            games = rawData.map(entry => new Game(
+                entry.title,
+                entry.designer,
+                entry.artist,
+                entry.publisher,
+                entry.year,
+                entry.players,
+                entry.time,
+                entry.difficulty,
+                entry.url,
+                entry.playCount,
+                entry.personalRating
+            ));
+            saveLocalStorage(games);
+            visuals();
+        } catch (err) {
+            alert("Failed to import JSON: " + err.message);
+        }
     };
     reader.readAsText(file);
-}; 
+};
 
-function visuals() { 
+function visuals() {
     let htmlBuffer = "";
-    for(let i=0;i<games.length;i++) {
-htmlBuffer += `<div class="gameEntry">${htmlEntry(i)}</div>`;
+    for (let i = 0; i < games.length; i++) {
+        htmlBuffer += `<div class="gameEntry">${htmlEntry(i)}</div>`;
     }
     document.getElementById("display").innerHTML = htmlBuffer;
+    attachInputListeners();
 }
 
 function createHTML(index, fieldName, fieldValue) {
-    let fieldType = "text";
-    return `<label>${fieldName}</label><input type="${fieldType}" data-name="${fieldName}" value ="${fieldValue}" data-index="${index}" />`;
-}
+    if (fieldName === "personalRating") {
+        return `
+            <label>${fieldName}: <span id="rating-value-${index}">${fieldValue}</span></label>
+            <input type="range" min="0" max="10" step="1"
+                value="${fieldValue}"
+                data-name="${fieldName}"
+                data-index="${index}"
+                class="editable-field slider" />
+            <br/>
+        `;
+    }
+
+    let fieldType = typeof fieldValue === "number" ? "number" : "text";
+    return `<label>${fieldName}</label>
+            <input type="${fieldType}" data-name="${fieldName}" value="${fieldValue}" data-index="${index}" class="editable-field" />
+            <br/>`;
+}     
 
 function htmlEntry(index) {
     let gameEntry = games[index];
-let fieldNames = Object.keys(gameEntry);
-let buffer = "";
-for(let i =0;i<fieldNames.length;i++) {
-    buffer += createHTML(index, fieldNames[i], gameEntry[fieldNames[i]]);
+    let fieldNames = Object.keys(gameEntry);
+    let buffer = `<h3>${gameEntry.title}</h3>`;
+    for (let i = 0; i < fieldNames.length; i++) {
+        buffer += createHTML(index, fieldNames[i], gameEntry[fieldNames[i]]);
+    }
+    return buffer;
 }
-return buffer;
+
+function attachInputListeners() {
+    document.querySelectorAll(".editable-field").forEach(input => {
+        input.addEventListener("input", (e) => {
+            const index = parseInt(e.target.dataset.index);
+            const key = e.target.dataset.name;
+            let value = e.target.value;
+
+            if (["playCount", "personalRating", "year"].includes(key)) {
+                value = parseInt(value);
+            }
+
+            games[index][key] = value;
+
+            if (key === "personalRating") {
+                document.getElementById(`rating-value-${index}`).innerText = value;
+            }
+
+            saveLocalStorage(games);
+        });
+    });
 }

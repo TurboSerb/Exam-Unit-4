@@ -17,5 +17,7 @@ Step 5.
 
 made visuals for the live server visualizing, title, designer, artist, publisher, year, players, time and difficulty. displaying the different information from the JSON file.
 
+Step 6.
 
+i made it so that on the live server there is some order to it, i added a sliding bar for the rating and a adjustable button for the player count. i also had to go back and change my code becuase it wouldnt show up on the live server.
 
