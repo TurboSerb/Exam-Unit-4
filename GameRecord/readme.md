@@ -21,3 +21,7 @@ Step 6.
 
 i made it so that on the live server there is some order to it, i added a sliding bar for the rating and a adjustable button for the player count. i also had to go back and change my code becuase it wouldnt show up on the live server.
 
+step 7 and 8.
+
+added an UI to the html doc to add more games. And added code in the app.mjs doc to make the UI work on the live server
+

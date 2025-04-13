@@ -1,7 +1,8 @@
 import Game from "./Models/Game.mjs";
 
 const STORAGE_NAME = "GameData";
-let games = retrieveAllGames()
+let games = retrieveAllGames();
+visuals();
 
 function retrieveAllGames() {
     let listOfRetrievedGames = outputJson(retrieveGamesFromLocalStorage()||"[]");
@@ -47,13 +48,13 @@ function outputJson(input) {
     } else if (input === null || input === undefined) {
         return [];
     } else {
-        return [input]; // fallback
+        return [input]; 
     }
 }
 
 
 function saveJSON(gameObjects) {
-    saveToStorage(JSON.stringify(gameObjects));
+    saveLocalStorage(JSON.stringify(gameObjects));
 }
 
 document.getElementById("importSource").onchange = function (event) {
@@ -75,7 +76,7 @@ document.getElementById("importSource").onchange = function (event) {
                 entry.playCount,
                 entry.personalRating
             ));
-            saveLocalStorage(games);
+            saveJSON(games);
             visuals();
         } catch (err) {
             alert("Failed to import JSON: " + err.message);
@@ -143,3 +144,24 @@ function attachInputListeners() {
         });
     });
 }
+
+document.getElementById("addGame").addEventListener("click", function() {
+    let gameEntry = new Game(
+        document.getElementById("title").value,
+        document.getElementById("designer").value,
+        document.getElementById("artist").value,
+        document.getElementById("publisher").value,
+        document.getElementById("year").value,
+        document.getElementById("players").value,
+        document.getElementById("time").value,
+        document.getElementById("difficulty").value,
+        document.getElementById("url").value,
+        document.getElementById("playCount").value,
+        document.getElementById("personalRating").value
+    );
+    games.push(gameEntry);
+    saveJSON(games);
+    visuals();
+
+});
+ 

@@ -14,8 +14,27 @@
 
 <div id="display"></div>
 
-
-
+<section id="newGames">
+    <h2>New Games</h2>
+   
+        <div id="newGameForm">
+            <input type="text" id="title" placeholder="Game Title" required>
+            <input type="text" id="designer" placeholder="Designer">
+            <input type="text" id="artist" placeholder="Artist">
+            <input type="text" id="publisher" placeholder="Publisher">
+            <input type="number" id="year" placeholder="Year">
+            <input type="text" id="players" placeholder="Players">
+            <input type="text" id="time" placeholder="Play Time">
+            <input type="text" id="difficulty" placeholder="Difficulty">
+            <input type="url" id="url" placeholder="Game URL">
+            <input type="number" id="playCount" placeholder="Play Count" value="0" min="0">
+            
+            <label for="personalRating">Personal Rating (from 1 to 10):</label>
+            <input type="range" id="personalRating" value="0" min="1" max="10" step="1">
+            <output id="ratingOutput">0</output>
+            
+            <button id="addGame">Add</button>
+          </div>
 </body>
 
 </html>
